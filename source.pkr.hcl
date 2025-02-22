@@ -126,9 +126,9 @@ build {
       "VMWARE=1"
     ]
     scripts = [
-      "scripts/debian/create-user.sh",
-      "scripts/debian/disable-ipv6.sh",
-      "scripts/debian/install.sh"
+      "scripts/create-user.sh",
+      "scripts/disable-ipv6.sh",
+      "scripts/install.sh"
     ]
   }
 
