@@ -12,16 +12,10 @@ variable "packer_cache_dir" {
   type = string
   default = "/tmp/packer_cache"
 }
-# Output directory for the box file
+
 variable "out_dir" {
   type = string
   default = "/tmp/packer_cache/out"
-}
-
-# VM name as shown in VMware Fusion
-variable "vm_name" {
-  type = string
-  default = "packer-debian12-arm64"
 }
 
 variable "iso_url" {
@@ -36,7 +30,7 @@ variable "iso_checksum" {
 
 variable "vm_cpus" {
   type = number
-  default = 8
+  default = 2
 }
 
 variable "vm_memory" {
@@ -47,6 +41,12 @@ variable "vm_memory" {
 variable "vm_disk_size" {
   type = number
   default = 20480
+}
+
+# VM name as shown in VMware Fusion
+variable "vm_name" {
+  type = string
+  default = "Debian 12.9 (arm64)"
 }
 
 packer {
@@ -73,7 +73,7 @@ source "vmware-iso" "debian" {
   guest_os_type     = "arm-debian12-64"
   disk_adapter_type = "nvme"
   version           = 20
-  http_directory    = "http/debian"
+  http_directory    = "http"
   boot_command = [
     "c",
     "linux /install.a64/vmlinuz",

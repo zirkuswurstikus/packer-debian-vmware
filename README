@@ -1,0 +1,95 @@
+Debian 12.9 ARM64 VMware Box
+===========================
+
+A Packer configuration to build a Debian 12.9 ARM64 box for VMware Fusion on Apple Silicon Macs.
+This project is primarily for personal lab environments, but feel free to use it as you see fit.
+
+Requirements
+-----------
+- VMware Fusion (Apple Silicon)
+- Packer 1.11.2
+- Vagrant with vmware_desktop plugin
+- Git
+- make
+
+Quick Start
+----------
+```bash
+# Install Packer, Vagrant, Git and make
+brew install packer vagrant git make
+
+# Clone and build
+git clone https://github.com/yourusername/packer-debian-vmware
+cd packer-debian-vmware
+make all
+```
+
+Configuration
+------------
+The following variables can be configured in the Makefile:
+
+Cache and Output Directories:
+- PACKER_CACHE_DIR: Base cache directory (default: /tmp/packer_cache)
+- OUT_DIR: Output directory for box file (default: /tmp/packer_cache/out)
+
+VM Configuration:
+- VM_NAME: Name shown in VMware Fusion (default: "Packer_Debian_12.9_arm64")
+- VM_CPUS: Number of CPUs (default: 8)
+- VM_MEMORY: Memory in MB (default: 2048)
+
+ISO Configuration:
+- ISO_URL: URL to Debian netinstall ISO
+- ISO_CHECKSUM: SHA512 checksum of ISO
+
+Available Make Targets
+-------------------
+- all: Run complete workflow (build and test)
+- build: Build the VMware box
+- test: Test the box with Vagrant
+- clean: Clean up build artifacts
+- init: Initialize Packer plugins
+
+Common Issues
+------------
+1. VNC Connection Refused
+   Error: "error connecting to VNC: dial tcp 127.0.0.1:5989: connect: connection refused"
+   Fix: Reset VMware Fusion:
+   ```
+   sudo pkill -f "VMware Fusion" && sleep 3 && open -a "VMware Fusion"
+   ```
+
+2. Duplicate Variables
+   Error: "Duplicate variable definition found"
+   Fix: Ensure only one .pkr.hcl file exists with variable definitions
+
+3. VMware Warning
+   Warning: "Your vmx data contains virtualHW.version"
+   Note: This warning can be ignored
+
+Box Details
+----------
+- OS: Debian 12.9 ARM64
+- Username: vagrant
+- Password: vagrant
+- Disk: 20GB
+- Memory: 2GB (configurable)
+- CPUs: 8 (configurable)
+
+Provisioning
+-----------
+The box is provisioned using:
+1. Base configuration via preseed.cfg
+2. Shell scripts for user setup and system configuration
+3. Ansible local for additional software and configurations
+
+Acknowledgments
+--------------
+This project stands on the shoulders of giants. Special thanks to:
+
+- The Debian project for ARM64 support
+- HashiCorp for Packer and Vagrant
+- VMware for Apple Silicon support
+- The Ansible community
+- Contributors to various tools and plugins used in this project
+
+This documentation was enhanced with the assistance of AI (Claude) to ensure clarity and completeness. 

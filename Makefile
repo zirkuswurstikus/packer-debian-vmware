@@ -3,7 +3,7 @@ PACKER_CACHE_DIR := /tmp/packer_cache
 OUT_DIR := $(PACKER_CACHE_DIR)/out
 
 # VM configuration
-VM_NAME := "packer-debian12-arm64"
+VM_NAME := "Packer_Debian_12.9_arm64" # no whitespace
 VM_CPUS := 8
 VM_MEMORY := 2048
 

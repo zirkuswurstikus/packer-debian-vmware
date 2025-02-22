@@ -1,0 +1,119 @@
+---
+- name: Bootstrap Debian VMs
+  hosts: all
+  become: true
+  
+  handlers:
+    - name: reboot
+      reboot:
+        msg: "Rebooting due to network configuration changes"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 21600    # 6 hours in seconds
+        force_apt_get: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: full
+        force_apt_get: yes
+
+    - name: Install common packages
+      apt:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - htop      # Interactive process viewer and system monitor
+        - git       # Version control system
+        - curl      # Command line tool for transferring data
+        - wget      # Command line tool for retrieving files
+        - unzip     # Extraction utility for ZIP archives
+        - net-tools # Network utilities (netstat, ifconfig, etc.)
+        - ufw       # Uncomplicated Firewall for network security
+
+    - name: Set timezone
+      timezone:
+        name: UTC
+
+    # Vim configuration block
+    - block:
+      - name: Install vim
+        apt:
+          name: vim
+          state: latest
+
+      - name: Configure vim
+        copy:
+          dest: /etc/vim/vimrc.local
+          content: |
+            set background=dark
+            set number
+            set expandtab
+            set tabstop=2
+            set shiftwidth=2
+            syntax on
+      tags: vim
+
+    # Bat configuration block
+    - block:
+      - name: Install bat
+        apt:
+          name: bat
+          state: latest
+
+      - name: Configure bat aliases
+        blockinfile:
+          path: /etc/bash.bashrc
+          block: |
+            # Bat configuration
+            # BAT_STYLE="plain" enables only syntax highlighting without decorations
+            # BAT_PAGER="" disables paging for direct output
+            # 'cat' alias provides syntax highlighting for quick file viewing
+            # 'bat' alias gives access to full features (line numbers, git changes, etc)
+            export BAT_STYLE="plain"
+            export BAT_PAGER=""
+            alias cat='batcat'
+            alias bat='batcat --style=full --paging=always'
+          marker: "# {mark} ANSIBLE MANAGED BLOCK - bat config"
+      tags: bat
+
+    - name: Add useful aliases
+      blockinfile:
+        path: /etc/bash.bashrc
+        block: |
+          # Custom aliases
+          alias ll='ls -la'
+          alias h='history'
+          alias df='df -h'
+          alias du='du -h'
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - aliases"
+
+    # Configure MOTD
+    - name: Configure dynamic MOTD script
+      copy:
+        dest: /etc/update-motd.d/99-services
+        mode: '0755'
+        content: |
+          #!/bin/sh
+          IP=$(ip route get 1 | awk '{print $7;exit}')
+          echo "Welcome to Debian 12.8"
+          echo "-------------------"
+          echo
+          echo "Available Services:"
+          echo "  * SSH:    $IP:22"
+          echo
+
+    # Cleanup tasks
+    # - name: Clean apt cache
+    #   apt:
+    #     clean: yes
+    #     autoclean: yes
+    #     autoremove: yes
+    #     force_apt_get: yes 
