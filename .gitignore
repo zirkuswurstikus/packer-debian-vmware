@@ -1,0 +1,18 @@
+# Vagrant artifacts
+.vagrant/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+.idea/
+*.swp
+*~
+
+# Ansible
+*.retry
+
+# Cache directories
+.cache/ 
