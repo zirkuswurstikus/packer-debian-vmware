@@ -15,4 +15,4 @@ Thumbs.db
 *.retry
 
 # Cache directories
-.cache/ .DS_Store
+.cache/
